@@ -1,11 +1,12 @@
-from api.pagination import CustomPagination
-from api.serializers import FollowSerializer
-from djoser.serializers import SetPasswordSerializer
-from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from djoser.serializers import SetPasswordSerializer
+from djoser.views import UserViewSet
+
+from api.pagination import CustomPagination
+from api.serializers import FollowSerializer
 
 from .models import Follow, User
 from .permissions import RegistrationOrReadOnly
@@ -55,25 +56,23 @@ class UserViewSet(UserViewSet):
                     {'message': f'Вы подписались на {author.username}.'},
                     status=status.HTTP_201_CREATED
                 )
-            else:
-                return Response(
-                    {'message': f'Вы уже подписаны на {author.username}.'},
-                    status=status.HTTP_200_OK
-                )
+            return Response(
+                {'message': f'Вы уже подписаны на {author.username}.'},
+                status=status.HTTP_200_OK
+            )
 
-        elif request.method == 'DELETE':
-            try:
-                follow = Follow.objects.get(user=user, author=author)
-                follow.delete()
-                return Response(
-                    {'message': f'Вы отписались от {author.username}.'},
-                    status=status.HTTP_200_OK
-                )
-            except Follow.DoesNotExist:
-                return Response(
-                    {'message': f'Вы не подписаны на {author.username}.'},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+        try:
+            follow = Follow.objects.get(user=user, author=author)
+            follow.delete()
+            return Response(
+                {'message': f'Вы отписались от {author.username}.'},
+                status=status.HTTP_200_OK
+            )
+        except Follow.DoesNotExist:
+            return Response(
+                {'message': f'Вы не подписаны на {author.username}.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):

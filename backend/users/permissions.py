@@ -6,5 +6,4 @@ class RegistrationOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return request.user and request.user.is_authenticated
-        else:
-            return not request.user or not request.user.is_authenticated
+        return not request.user or not request.user.is_authenticated

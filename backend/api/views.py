@@ -84,18 +84,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_201_CREATED
             )
 
-        elif request.method == 'DELETE':
-            if recipe.id not in favorite_recipe_ids:
-                return Response(
-                    {'errors': 'Рецепт не найден в избранном.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            favorite = Favorite.objects.get(
-                user=request.user,
-                model_to_subscribe=recipe
+        if recipe.id not in favorite_recipe_ids:
+            return Response(
+                {'errors': 'Рецепт не найден в избранном.'},
+                status=status.HTTP_400_BAD_REQUEST
             )
-            favorite.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        favorite = Favorite.objects.get(
+            user=request.user,
+            model_to_subscribe=recipe
+        )
+        favorite.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[IsAuthenticated],
@@ -117,24 +116,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     serializer.data,
                     status=status.HTTP_201_CREATED
                 )
-            else:
-                return Response(
-                    {'errors': 'Рецепт уже в корзине.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            return Response(
+                {'errors': 'Рецепт уже в корзине.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        elif request.method == 'DELETE':
-            try:
-                cart_item = Cart.objects.get(
-                    user=user, model_to_subscribe=recipe
-                )
-                cart_item.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            except Cart.DoesNotExist:
-                return Response(
-                    {'errors': 'Рецепт не найден в корзине.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+        try:
+            cart_item = Cart.objects.get(
+                user=user, model_to_subscribe=recipe
+            )
+            cart_item.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Cart.DoesNotExist:
+            return Response(
+                {'errors': 'Рецепт не найден в корзине.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated],
