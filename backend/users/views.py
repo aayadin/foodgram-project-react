@@ -1,5 +1,6 @@
 from api.pagination import CustomPagination
 from api.serializers import FollowSerializer
+from djoser.serializers import SetPasswordSerializer
 from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
@@ -19,6 +20,8 @@ class UserViewSet(UserViewSet):
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
+            if self.action == 'set_password':
+                return SetPasswordSerializer
             return CreateUserSerializer
         return GetUserSerializer
 

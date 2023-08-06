@@ -1,9 +1,13 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-v88jp&f#1#^q$e-l##9(pc#3#xt+r9zfpx*#cio%+%rn_b&7v7'
+SECRET_KEY = os.getenv('SECRET_KEY', default='74bo1f9vgb542809vbv2eqv90&*b2b')
 
 DEBUG = True
 
@@ -17,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'rest_framework.authtoken',
     'djoser',
     'api.apps.ApiConfig',
@@ -26,6 +31,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -53,11 +59,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-# Перевести на PostgreSQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql_psycopg2'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='localhost'),
+        'PORT': os.getenv('DB_PORT', default=5432)
     }
 }
 
@@ -87,6 +96,7 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -103,5 +113,7 @@ REST_FRAMEWORK = {
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'HIDE_USERS': False,
-    'set_password': 'djoser.serializers.SetPasswordSerializer',
 }
+
+CORS_URLS_REGEX = r'^/api/.*$'
+CORS_ORIGIN_ALLOW_ALL = True
