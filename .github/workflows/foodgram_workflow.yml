@@ -43,7 +43,7 @@ jobs:
           with:
             context: backend/
             push: true
-            tags: ${{ secrets.DOCKER_USERNAME }}/foodgram:latest
+            tags: ${{ secrets.DOCKER_USERNAME }}/backend_foodgram:latest
             file: backend/Dockerfile
 
   build_and_push_front_to_docker_hub:
@@ -64,7 +64,7 @@ jobs:
       with:
         context: frontend/
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/infra_foodgram:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/frontend_foodgram:latest
         file: frontend/Dockerfile
 
   deploy:
@@ -81,7 +81,7 @@ jobs:
             script: |
               sudo docker-compose down
               sudo pwd
-              sudo docker image rm andrlecht/foodgram
+              sudo docker image rm andrlecht/backend_foodgram
               rm .env
               touch .env
               echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
