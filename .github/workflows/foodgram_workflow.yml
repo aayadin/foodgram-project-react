@@ -80,6 +80,7 @@ jobs:
             passphrase: ${{ secrets.PASSPHRASE }}
             script: |
               sudo docker-compose down
+              sudo pwd
               sudo docker image rm andrlecht/foodgram
               rm .env
               touch .env
