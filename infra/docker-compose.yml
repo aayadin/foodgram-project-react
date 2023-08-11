@@ -9,7 +9,7 @@ services:
       - ./.env
 
   backend:
-    image: andrlecht/foodgram_backend:latest
+    image: andrlecht/backend_foodgram:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -20,7 +20,7 @@ services:
       - ./.env
 
   frontend:
-    image: andrlecht/infra_frontend:latest
+    image: andrlecht/frontend_foodgram:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
@@ -31,7 +31,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/conf.d
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
       - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
