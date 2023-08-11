@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from users.permissions import IsAuthorOrReadOnly
 from . import serializers
 from .models import Cart, Favorite, Ingredient, Recipe, Tag
 from .pagination import CustomPagination
@@ -23,7 +24,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().prefetch_related(
         'ingredientamount_set__ingredient'
     )
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
     pagination_class = CustomPagination
 
     def get_serializer_class(self):
@@ -37,20 +38,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(author=self.request.user)
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-
-        if request.user != instance.author:
-            return Response(
-                {'detail': 'У вас нет прав для удаления этого рецепта.'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
         self.perform_destroy(instance)
         return Response(
             {'detail': 'Рецепт успешно удален.'},
@@ -84,7 +73,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_201_CREATED
             )
 
-        if recipe.id not in favorite_recipe_ids:
+        if not recipe.favorites.all().exists():
             return Response(
                 {'errors': 'Рецепт не найден в избранном.'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -110,7 +99,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
             if created:
                 serializer = serializers.LimitRecipesSerializer(
-                    cart_item.recipe
+                    cart_item.model_to_subscribe
                 )
                 return Response(
                     serializer.data,
@@ -121,17 +110,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        try:
-            cart_item = Cart.objects.get(
-                user=user, model_to_subscribe=recipe
-            )
-            cart_item.delete()
+        cart_items = Cart.objects.filter(
+            user=user, model_to_subscribe=recipe
+        )
+        if cart_items.first():
+            cart_items.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except Cart.DoesNotExist:
-            return Response(
-                {'errors': 'Рецепт не найден в корзине.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        return Response(
+            {'errors': 'Рецепт не найден в корзине.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated],

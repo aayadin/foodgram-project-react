@@ -86,6 +86,7 @@ class Follow(models.Model):
                 fields=['user', 'author'], name="unique_follow"
             ),
         ]
+        order_with_respect_to = 'author'
 
     def __str__(self):
-        return f'{self.user.username} подписан на {self.follow.username}'
+        return f'{self.user.username} подписан на {self.author.username}'

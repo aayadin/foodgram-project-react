@@ -1,29 +1,31 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from users.models import User
+from . import const
 
 
 class Tag(models.Model):
     """Модель тэга"""
     name = models.CharField(
         'Название',
-        max_length=200
+        max_length=const.MAX_LEN_CHAR
     )
     color = models.CharField(
         'Цвет',
-        max_length=7,
+        max_length=const.MAX_LEN_COLOR,
         null=True
     )
     slug = models.SlugField(
         'slug',
-        max_length=200,
+        max_length=const.MAX_LEN_CHAR,
         unique=True
     )
 
     class Meta:
         verbose_name = 'Тэг'
         verbose_name_plural = 'Тэги'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -33,16 +35,17 @@ class Ingredient(models.Model):
     """Модель ингредиента"""
     name = models.CharField(
         'Название',
-        max_length=200
+        max_length=const.MAX_LEN_CHAR
     )
     measurement_unit = models.CharField(
         'Единицы измерения',
-        max_length=200
+        max_length=const.MAX_LEN_CHAR
     )
 
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -64,7 +67,7 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         'Название',
-        max_length=200,
+        max_length=const.MAX_LEN_CHAR,
     )
     image = models.ImageField(
         'Картинка',
@@ -74,13 +77,15 @@ class Recipe(models.Model):
     )
     text = models.TextField(
         'Описание',
-        max_length=5000
+        max_length=const.MAX_LEN_TEXT
     )
-    cooking_time = models.IntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления (в минутах)',
         validators=[
             MinValueValidator(
-                1, message='Минимальное время 1 минута')
+                const.MIN_LEN_VALID, message='Минимальное время 1 минута'),
+            MaxValueValidator(
+                const.MAX_LEN_VALID, message='Максимально время 32000 минут')
         ]
     )
     pub_date = models.DateTimeField(
@@ -118,6 +123,10 @@ class Favorite(models.Model):
                 fields=['user', 'model_to_subscribe'], name='unique_favorite'
             ),
         ]
+        order_with_respect_to = 'model_to_subscribe'
+
+    def __str__(self):
+        return f'Рецепт {self.model_to_subscribe.name} в избранном'
 
 
 class Cart(models.Model):
@@ -130,6 +139,7 @@ class Cart(models.Model):
     model_to_subscribe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
+        related_name='in_cart'
     )
 
     class Meta:
@@ -140,6 +150,10 @@ class Cart(models.Model):
                 fields=['user', 'model_to_subscribe'], name='unique_cart'
             )
         ]
+        order_with_respect_to = 'model_to_subscribe'
+
+    def __str__(self):
+        return f'Рецепт {self.model_to_subscribe.name} в корзине'
 
 
 class IngredientAmount(models.Model):
@@ -157,7 +171,14 @@ class IngredientAmount(models.Model):
     amount = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(
-                1, message='Минимальное количество ингридиента 1')]
+                const.MIN_LEN_VALID,
+                message='Минимальное количество ингридиента 1'
+            ),
+            MaxValueValidator(
+                const.MAX_LEN_VALID,
+                message='Максимально время 32000 минут'
+            )
+        ]
     )
 
     class Meta:
@@ -168,3 +189,7 @@ class IngredientAmount(models.Model):
                 fields=['ingredient', 'recipe'], name='unique_ingredients'
             )
         ]
+        ordering = ['id']
+
+    def __str__(self):
+        return f'Количество {self.ingredient.name} - {self.amount}'

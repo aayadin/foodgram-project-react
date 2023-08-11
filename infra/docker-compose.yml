@@ -9,7 +9,7 @@ services:
       - ./.env
 
   backend:
-    image: andrlecht/foodgram:latest
+    image: andrlecht/foodgram_backend:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -20,11 +20,11 @@ services:
       - ./.env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: andrlecht/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
+    depends_on:
+      - db
 
   nginx:
     image: nginx:1.19.3

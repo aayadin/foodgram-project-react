@@ -3,9 +3,15 @@ from django.contrib import admin
 from .models import Cart, Favorite, Ingredient, IngredientAmount, Recipe, Tag
 
 
+class RecipeIngredientInline(admin.TabularInline):
+    model = IngredientAmount
+    extra = 1
+
+
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'author', 'count_favorites',)
     list_filter = ('name', 'author', 'tags',)
+    inlines = (RecipeIngredientInline,)
 
     def count_favorites(self, obj):
         return obj.favorites.count()
