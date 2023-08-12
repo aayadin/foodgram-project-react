@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='74bo1f9vgb542809vbv2eqv90&*b2b')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', 'yourfood.ddns.net', '51.250.98.3']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
