@@ -2,7 +2,7 @@ import csv
 
 from django.core.management.base import BaseCommand
 
-from api.models import Ingredients
+from api.models import Ingredient
 
 
 class Command(BaseCommand):
@@ -13,7 +13,7 @@ class Command(BaseCommand):
                   encoding='utf8') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
-                i = Ingredients(
+                i = Ingredient(
                     name=row[0],
                     measurement_unit=row[1]
                 )
