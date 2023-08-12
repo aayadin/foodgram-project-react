@@ -3,6 +3,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
 
 from users.permissions import IsAuthorOrReadOnly
 from . import serializers
@@ -13,6 +14,8 @@ from .pagination import CustomPagination
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = serializers.TagsSerializer
+    filter_backends = SearchFilter
+    search_fields = ('name',)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
