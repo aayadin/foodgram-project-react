@@ -49,7 +49,7 @@ jobs:
   frontend:
     name: Push frontend image to Docker Hub
     runs-on: ubuntu-latest
-    needs: backend
+    needs: tests
     steps:
     - uses: actions/checkout@v2
     - name: Set up Docker Buildx
@@ -69,7 +69,7 @@ jobs:
 
   deploy:
       runs-on: ubuntu-latest
-      needs: frontend
+      needs: backend, frontend
       steps:
         - name: executing remote ssh commands to deploy
           uses: appleboy/ssh-action@master
