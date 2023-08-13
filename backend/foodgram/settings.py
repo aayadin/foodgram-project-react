@@ -12,7 +12,6 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='74bo1f9vgb542809vbv2eqv90&*b2b')
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'yourfood.ddns.net', '51.250.98.3', 'backend']
-# ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -69,13 +68,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', default=5432)
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

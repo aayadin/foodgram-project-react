@@ -1,8 +1,8 @@
-from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import FilterSet, filters
 
-from .models import Recipe, Tag
 from users.models import User
+from .models import Recipe, Tag
 
 
 class IngredientFilter(SearchFilter):
@@ -10,10 +10,10 @@ class IngredientFilter(SearchFilter):
 
 
 class RecipeFilter(FilterSet):
-    tags = filters.ModelChoiceFilter(
+    tags = filters.ModelMultipleChoiceFilter(
+        queryset=Tag.objects.all(),
         field_name='tags__slug',
         to_field_name='slug',
-        queryset=Tag.objects.all(),
     )
     author = filters.ModelChoiceFilter(
         queryset=User.objects.all()

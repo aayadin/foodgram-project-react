@@ -1,15 +1,11 @@
-### Диплом
-исправить
-[![Django-app workflow](https://github.com/aayadin/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)](https://github.com/aayadin/yamdb_final/actions/workflows/yamdb_workflow.yml)
+### Дипломный проект: Продуктовый помощник
+
+[![Django-app workflow](https://github.com/aayadin/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?branch=master)](https://github.com/aayadin/foodgram-project-react/actions/workflows/foodgram_workflow.yml)
 
 ## Описание
-
-## Доступ к API:
+Продуктовый помощник - сайт для публикации и поиска рецептов. Рецепты можно добавлять в избранное и в корзину. Доступна функция скачивания списка покупок для рецептов, находящихся в корзине. Можно подписываться на второв рецептов.
+## Сайт доступен по url:
 ```
-
-```
-
-## Техническая документация по API доступна по ссылке:
-```
-
+http://yourfood.ddns.net
+ip: 51.250.98.3
 ```

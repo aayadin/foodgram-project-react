@@ -1,9 +1,9 @@
 from django.http import HttpResponse
+from django_filters import rest_framework as f
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django_filters import rest_framework as filters
 
 from users.permissions import IsAuthorOrReadOnly
 from . import serializers
@@ -30,7 +30,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
     pagination_class = CustomPagination
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (f.DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
@@ -139,9 +139,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         type_name = 'attachment; filename="shopping_cart.txt"'
         response['Content-Disposition'] = type_name
 
-        for cart_item in cart_items:
-            for ingr_amount in cart_item.recipe.ingredientamount_set.all():
-                ingredient_name = ingr_amount.ingredient.name
-                amount = ingr_amount.amount
+        for i in cart_items:
+            for ingr in i.model_to_subscribe.ingredientamount_set.all():
+                ingredient_name = ingr.ingredient.name
+                amount = ingr.amount
                 response.write(f"{ingredient_name} - {amount}\n")
         return response
