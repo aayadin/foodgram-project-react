@@ -66,9 +66,11 @@ class CreateUpdateDeleteRecipesSerializer(serializers.ModelSerializer):
 
     def create_ingredients(self, ingredients_data, recipe):
         IngredientAmount.objects.bulk_create(
-            IngredientAmount(ingredient=Ingredient.objects.get(id=ingredient['id']),
-                             amount=ingredient['amount'],
-                             recipe=recipe)
+            IngredientAmount(
+                ingredient=Ingredient.objects.get(id=ingredient['id']),
+                amount=ingredient['amount'],
+                recipe=recipe
+            )
             for ingredient in ingredients_data
         )
 
@@ -139,7 +141,6 @@ class LimitRecipesSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         if user.fav_user.filter(model_to_subscribe=self.obj).exists():
             raise serializers.ValdationError('Рецепт уже в избранном.')
-
 
     class Meta:
         model = Recipe
