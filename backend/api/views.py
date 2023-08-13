@@ -28,7 +28,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().prefetch_related(
         'ingredientamount_set__ingredient'
     )
-    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
+    permission_classes = [IsAuthorOrReadOnly]
     pagination_class = CustomPagination
     filter_backends = (f.DjangoFilterBackend,)
     filterset_class = RecipeFilter
@@ -139,9 +139,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         type_name = 'attachment; filename="shopping_cart.txt"'
         response['Content-Disposition'] = type_name
 
-        for i in cart_items:
-            for ingr in i.model_to_subscribe.ingredientamount_set.all():
+        shopping_dict = {}
+        for item in cart_items:
+            for ingr in item.model_to_subscribe.ingredientamount_set.all():
                 ingredient_name = ingr.ingredient.name
                 amount = ingr.amount
-                response.write(f"{ingredient_name} - {amount}\n")
+                if ingredient_name in shopping_dict.keys():
+                    amount += shopping_dict[ingredient_name]
+                    shopping_dict[ingredient_name] = amount
+                shopping_dict[ingredient_name] = amount
+
+        for key in shopping_dict:
+            ingr = Ingredient.objects.get(name=key)
+            response.write(f"{key} - {shopping_dict[key]} "
+                           f"{ingr.measurement_unit}\n")
         return response

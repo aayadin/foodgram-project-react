@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='74bo1f9vgb542809vbv2eqv90&*b2b')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'yourfood.ddns.net', '51.250.98.3', 'backend']
 
