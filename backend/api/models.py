@@ -107,7 +107,8 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Пользователь'
+        verbose_name='Пользователь',
+        related_name='fav_user'
     )
     model_to_subscribe = models.ForeignKey(
         Recipe,
@@ -134,7 +135,8 @@ class Cart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Пользователь'
+        verbose_name='Пользователь',
+        related_name='cart_user'
     )
     model_to_subscribe = models.ForeignKey(
         Recipe,

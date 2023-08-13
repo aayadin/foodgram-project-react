@@ -57,18 +57,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             url_path='favorite')
     def favorite(self, request, pk=None):
         recipe = self.get_object()
-        favorite_recipe_ids = list(
-            Favorite.objects.filter(user=request.user).values_list(
-                'model_to_subscribe', flat=True
-            )
-        )
 
         if request.method == 'POST':
-            if recipe.id in favorite_recipe_ids:
-                return Response(
-                    {'errors': 'Рецепт уже в избранном.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
             Favorite.objects.create(
                 user=request.user,
                 model_to_subscribe=recipe
