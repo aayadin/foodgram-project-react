@@ -3,10 +3,10 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.filters import SearchFilter
 
 from users.permissions import IsAuthorOrReadOnly
 from . import serializers
+from .filters import IngredientFilter, RecipeFilter
 from .models import Cart, Favorite, Ingredient, Recipe, Tag
 from .pagination import CustomPagination
 
@@ -14,13 +14,13 @@ from .pagination import CustomPagination
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = serializers.TagsSerializer
-    filter_backends = SearchFilter
-    search_fields = ('name',)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = serializers.IngredientsSerializer
+    filter_backends = (IngredientFilter,)
+    search_fields = ('^name',)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -29,6 +29,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
     pagination_class = CustomPagination
+    filter_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.request.method == 'GET':

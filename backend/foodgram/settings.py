@@ -12,6 +12,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='74bo1f9vgb542809vbv2eqv90&*b2b')
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'yourfood.ddns.net', '51.250.98.3', 'backend']
+# ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -21,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'rest_framework.authtoken',
     'djoser',
     'api.apps.ApiConfig',
@@ -90,9 +92,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Europe/Moscow"
 
 USE_I18N = True
 
